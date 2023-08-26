@@ -23,7 +23,6 @@ IDENTIFIER              {IDENTIFIER_NONDIGIT}({IDENTIFIER_NONDIGIT}|{DIGIT})*
 
 NONZERO_DIGIT           [1-9]
 INTEGER_CONSTANT        {NONZERO_DIGIT}{DIGIT}*
-/* Idk whether I should add 0 to Integer_Constant */
 
 DIGIT_SEQUENCE          {DIGIT}+
 FRACTIONAL_CONSTANT     {DIGIT_SEQUENCE}?\.{DIGIT_SEQUENCE}|{DIGIT_SEQUENCE}\.
@@ -59,6 +58,7 @@ PUNCTUATOR              "["|"]"|"("|")"|"{"|"}"|"."|"->"|"++"|"--"|"&"|"*"|"+"|"
 "//"                    {BEGIN(IN_SINGLELINE_COMMENT);}
 
 <IN_MULTILINE_COMMENT>{
+    "\n"                {}
     "*/"                {BEGIN(INITIAL); return MULTI_LINE_COMMENT;}
     .                   {}
 }
