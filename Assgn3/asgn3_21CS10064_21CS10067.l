@@ -37,7 +37,7 @@ C_CHAR                  [^'\\\n]|{ESCAPE_SEQUENCE}
 C_CHAR_SEQUENCE         {C_CHAR}+
 CHARACTER_CONSTANT      '{C_CHAR_SEQUENCE}'
 
-S_CHAR                  [^"\\\n]|{ESCAPE_SEQUENCE}
+S_CHAR                  [^"\\\n]|{ESCAPE_SEQUENCE}.
 S_CHAR_SEQUENCE         {S_CHAR}+
 STRING_LITERAL          \"{S_CHAR_SEQUENCE}\"
 
