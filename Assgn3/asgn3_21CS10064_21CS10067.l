@@ -64,7 +64,7 @@ PUNCTUATOR              "["|"]"|"("|")"|"{"|"}"|"."|"->"|"++"|"--"|"&"|"*"|"+"|"
 }
 
 <IN_SINGLELINE_COMMENT>{
-    "\n"                  {BEGIN(INITIAL); return SINGLE_LINE_COMMENT;}
+    "\n"                {BEGIN(INITIAL); return SINGLE_LINE_COMMENT;}
     .                   {}
 }
 

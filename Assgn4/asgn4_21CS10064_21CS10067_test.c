@@ -36,6 +36,7 @@ int main()
     int num = 42;
     float pi = 3.14159;
     char initial = 'C';
+    char final = 'ABC';
     char str[] = "Hello, world!\n";
 
 
