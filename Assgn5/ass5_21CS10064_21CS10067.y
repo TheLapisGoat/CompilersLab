@@ -443,13 +443,13 @@ multiplicative_expression:
                             cast_expression
                                 { 
                                     // printf("\nLine %d : EXPRESSION Rule : multiplicative_expression -> cast_expression\n", yylineno);
-                                    $$ = new Expression();          
-                                    if($1->atype == "arr") {        
-                                        $$->loc = SymbolTable::genTemp($1->loc->type);  
-                                        emit("=[]", $$->loc->name, $1->Array->name, $1->loc->name);
+                                    $$ = new Expression();                  // Create a new Expression
+                                    if($1->atype == "arr") {                                            // If the Array is of type array
+                                        $$->loc = SymbolTable::genTemp($1->loc->type);                  // Generate a temporary symbol
+                                        emit("=[]", $$->loc->name, $1->Array->name, $1->loc->name);     // Emit Quad to copy the value of the Array at that index to the temporary symbol
                                     }
-                                    else if($1->atype == "ptr") { 
-                                        $$->loc = $1->loc; 
+                                    else if($1->atype == "ptr") {                       // If the Array is of type pointer
+                                        $$->loc = $1->loc;                              // Store the symbol in the Expression
                                     }
                                     else {
                                         $$->loc = $1->Array;
@@ -458,37 +458,37 @@ multiplicative_expression:
                             | multiplicative_expression ASTERISK cast_expression
                                 { 
                                     // printf("\nLine %d : EXPRESSION Rule : multiplicative_expression -> multiplicative_expression * cast_expression\n", yylineno);
-                                    if(typecheck($1->loc, $3->Array)) {
-                                        $$ = new Expression();                                                 
-                                        $$->loc = SymbolTable::genTemp(new SymbolType($1->loc->type->type));   
-                                        emit("*", $$->loc->name, $1->loc->name, $3->Array->name);               
+                                    if(typecheck($1->loc, $3->Array)) {         // Check if the types are compatible
+                                        $$ = new Expression();                                                          // Create a new Expression
+                                        $$->loc = SymbolTable::genTemp(new SymbolType($1->loc->type->type));            // Generate a temporary symbol
+                                        emit("*", $$->loc->name, $1->loc->name, $3->Array->name);                       // Emit Quad to multiply the two values
                                     }
                                     else {
-                                        yyerror("Incompatible types");
+                                        yyerror("Incompatible types");      // Throw an error if the types are incompatible
                                     }
                                 }
                             | multiplicative_expression SLASH cast_expression
                                 { 
                                     // printf("\nLine %d : EXPRESSION Rule : multiplicative_expression -> multiplicative_expression / cast_expression\n", yylineno);
-                                    if(typecheck($1->loc, $3->Array)) {   
-                                        $$ = new Expression();                                                 
-                                        $$->loc = SymbolTable::genTemp(new SymbolType($1->loc->type->type));    
-                                        emit("/", $$->loc->name, $1->loc->name, $3->Array->name);
+                                    if(typecheck($1->loc, $3->Array)) {                                             // Check if the types are compatible
+                                        $$ = new Expression();                                                      // Create a new Expression
+                                        $$->loc = SymbolTable::genTemp(new SymbolType($1->loc->type->type));            // Generate a temporary symbol
+                                        emit("/", $$->loc->name, $1->loc->name, $3->Array->name);                   // Emit Quad to divide the two values
                                     }
                                     else {
-                                        yyerror("Incompatible types");
+                                        yyerror("Incompatible types");      // Throw an error if the types are incompatible
                                     }
                                 }
                             | multiplicative_expression MODULO cast_expression
                                 { 
                                     // printf("\nLine %d : EXPRESSION Rule : multiplicative_expression -> multiplicative_expression %% cast_expression\n", yylineno);
-                                    if(typecheck($1->loc, $3->Array)) {     
-                                        $$ = new Expression();                                                  
-                                        $$->loc = SymbolTable::genTemp(new SymbolType($1->loc->type->type));    
-                                        emit("%", $$->loc->name, $1->loc->name, $3->Array->name);               
+                                    if(typecheck($1->loc, $3->Array)) {             // Check if the types are compatible
+                                        $$ = new Expression();                                                      // Create a new Expression
+                                        $$->loc = SymbolTable::genTemp(new SymbolType($1->loc->type->type));        // Generate a temporary symbol
+                                        emit("%", $$->loc->name, $1->loc->name, $3->Array->name);                   // Emit Quad to modulo the two values
                                     }
                                     else {
-                                        yyerror("Incompatible types");
+                                        yyerror("Incompatible types");                  // Throw an error if the types are incompatible
                                     }
                                 }
                             ;
@@ -497,30 +497,30 @@ additive_expression:
                     multiplicative_expression
                         { 
                             // printf("\nLine %d : EXPRESSION Rule : additive_expression -> multiplicative_expression\n", yylineno);
-                            $$ = $1;
+                            $$ = $1;    
                         }
                     | additive_expression PLUS multiplicative_expression
                         { 
                             // printf("\nLine %d : EXPRESSION Rule : additive_expression -> additive_expression + multiplicative_expression\n", yylineno);
-                            if(typecheck($1->loc, $3->loc)) {      
-                                $$ = new Expression();                                                
-                                $$->loc = SymbolTable::genTemp(new SymbolType($1->loc->type->type));    
-                                emit("+", $$->loc->name, $1->loc->name, $3->loc->name);                 
+                            if(typecheck($1->loc, $3->loc)) {                                                   // Check if the types are compatible
+                                $$ = new Expression();                                                          // Create a new Expression
+                                $$->loc = SymbolTable::genTemp(new SymbolType($1->loc->type->type));            // Generate a temporary symbol
+                                emit("+", $$->loc->name, $1->loc->name, $3->loc->name);                         // Emit Quad to add the two values
                             }
                             else {
-                                yyerror("Incompatible types");
+                                yyerror("Incompatible types");                      // Throw an error if the types are incompatible
                             }
                         }
                     | additive_expression MINUS multiplicative_expression
                         { 
                             // printf("\nLine %d : EXPRESSION Rule : additive_expression -> additive_expression - multiplicative_expression\n", yylineno);
-                            if(typecheck($1->loc, $3->loc)) {      
-                                $$ = new Expression();                                                 
-                                $$->loc = SymbolTable::genTemp(new SymbolType($1->loc->type->type));    
-                                emit("-", $$->loc->name, $1->loc->name, $3->loc->name);                 
+                            if(typecheck($1->loc, $3->loc)) {                                           // Check if the types are compatible
+                                $$ = new Expression();                                                  // Create a new Expression
+                                $$->loc = SymbolTable::genTemp(new SymbolType($1->loc->type->type));    // Generate a temporary symbol
+                                emit("-", $$->loc->name, $1->loc->name, $3->loc->name);                 // Emit Quad to subtract the two values
                             }
                             else {
-                                yyerror("Incompatible types");
+                                yyerror("Incompatible types");                                          // Throw an error if the types are incompatible
                             }
                         }
                     ;
@@ -529,15 +529,15 @@ shift_expression:
                     additive_expression
                         { 
                             // printf("\nLine %d : EXPRESSION Rule : shift_expression -> additive_expression\n", yylineno);
-                            $$ = $1;
+                            $$ = $1;                                                        
                         }
                     | shift_expression LEFT_SHIFT additive_expression
                         { 
                             // printf("\nLine %d : EXPRESSION Rule : shift_expression -> shift_expression << additive_expression\n", yylineno);
-                            if($3->loc->type->type == "int") {    
-                                $$ = new Expression();                                     
-                                $$->loc = SymbolTable::genTemp(new SymbolType("int"));      
-                                emit("<<", $$->loc->name, $1->loc->name, $3->loc->name);    
+                            if($3->loc->type->type == "int") {                          // Confirms that the type of the additive expression is int
+                                $$ = new Expression();                                      // Create a new Expression
+                                $$->loc = SymbolTable::genTemp(new SymbolType("int"));          // Generate a temporary symbol
+                                emit("<<", $$->loc->name, $1->loc->name, $3->loc->name);        // Emit Quad to shift the value of the shift expression by the value of the additive expression
                             }
                             else {
                                 yyerror("Incompatible types");
@@ -546,13 +546,13 @@ shift_expression:
                     | shift_expression RIGHT_SHIFT additive_expression
                         { 
                             // printf("\nLine %d : EXPRESSION Rule : shift_expression -> shift_expression >> additive_expression\n", yylineno);
-                            if($3->loc->type->type == "int") {    
-                                $$ = new Expression();                                     
-                                $$->loc = SymbolTable::genTemp(new SymbolType("int"));      
-                                emit(">>", $$->loc->name, $1->loc->name, $3->loc->name);    
+                            if($3->loc->type->type == "int") {                                  // Confirms that the type of the additive expression is int
+                                $$ = new Expression();                                          // Create a new Expression
+                                $$->loc = SymbolTable::genTemp(new SymbolType("int"));          // Generate a temporary symbol
+                                emit(">>", $$->loc->name, $1->loc->name, $3->loc->name);        // Emit Quad to shift the value of the shift expression by the value of the additive expression
                             }
                             else {
-                                yyerror("Incompatible types");
+                                yyerror("Incompatible types");                          // Throw an error if the types are incompatible
                             }
                         }
                     ;
@@ -566,61 +566,61 @@ relational_expression:
                         | relational_expression LESS_THAN shift_expression
                             { 
                                 // printf("\nLine %d : EXPRESSION Rule : relational_expression -> relational_expression < shift_expression\n", yylineno);
-                                if(typecheck($1->loc, $3->loc)) {                 
-                                    $$ = new Expression();                       
-                                    $$->type = "bool";
-                                    $$->trueList = makeList(nextInstruction());           
-                                    $$->falseList = makeList(nextInstruction() + 1);      
-                                    emit("<", "", $1->loc->name, $3->loc->name);    
-                                    emit("goto", "");                               
+                                if(typecheck($1->loc, $3->loc)) {                           // Check if the types are compatible
+                                    $$ = new Expression();                                  // Create a new Expression
+                                    $$->type = "bool";                                      // Set the type of the Expression to bool
+                                    $$->trueList = makeList(nextInstruction());             // Set the trueList of the Expression
+                                    $$->falseList = makeList(nextInstruction() + 1);        // Set the falseList of the Expression
+                                    emit("<", "", $1->loc->name, $3->loc->name);            // Emit Quad to check if the value of the relational expression is less than the value of the shit expression, in which case, a goto is performed
+                                    emit("goto", "");                                       // Emit Quad to perform a goto if the condition is false
                                 }
                                 else {
-                                    yyerror("Incompatible types");
+                                    yyerror("Incompatible types");                      // Throw an error if the types are incompatible
                                 }
                             }
                         | relational_expression GREATER_THAN shift_expression
                             { 
                                 // printf("\nLine %d : EXPRESSION Rule : relational_expression -> relational_expression > shift_expression\n", yylineno);
-                                if(typecheck($1->loc, $3->loc)) {                 
-                                    $$ = new Expression();                       
-                                    $$->type = "bool";
-                                    $$->trueList = makeList(nextInstruction());           
-                                    $$->falseList = makeList(nextInstruction() + 1);      
-                                    emit(">", "", $1->loc->name, $3->loc->name);    
-                                    emit("goto", "");                               
+                                if(typecheck($1->loc, $3->loc)) {                                           // Check if the types are compatible
+                                    $$ = new Expression();                                      // Create a new Expression
+                                    $$->type = "bool";                                          // Set the type of the Expression to bool
+                                    $$->trueList = makeList(nextInstruction());                 // Set the trueList of the Expression
+                                    $$->falseList = makeList(nextInstruction() + 1);            // Set the falseList of the Expression
+                                    emit(">", "", $1->loc->name, $3->loc->name);                // Emit Quad to check if the value of the relational expression is greater than the value of the shit expression, in which case, a goto is performed
+                                    emit("goto", "");                                           // Emit Quad to perform a goto if the condition is false
                                 }
                                 else {
-                                    yyerror("Incompatible types");
+                                    yyerror("Incompatible types");                              // Throw an error if the types are incompatible
                                 }
                             }
                         | relational_expression LESS_EQUAL_THAN shift_expression
                             { 
                                 // printf("\nLine %d : EXPRESSION Rule : relational_expression -> relational_expression <= shift_expression\n", yylineno);
-                                if(typecheck($1->loc, $3->loc)) {                 
-                                    $$ = new Expression();                       
-                                    $$->type = "bool";
-                                    $$->trueList = makeList(nextInstruction());           
-                                    $$->falseList = makeList(nextInstruction() + 1);      
-                                    emit("<=", "", $1->loc->name, $3->loc->name);    
-                                    emit("goto", "");                               
+                                if(typecheck($1->loc, $3->loc)) {                           // Check if the types are compatible
+                                    $$ = new Expression();                                  // Create a new Expression
+                                    $$->type = "bool";                                      // Set the type of the Expression to bool
+                                    $$->trueList = makeList(nextInstruction());             // Set the trueList of the Expression
+                                    $$->falseList = makeList(nextInstruction() + 1);        // Set the falseList of the Expression
+                                    emit("<=", "", $1->loc->name, $3->loc->name);           // Emit Quad to check if the value of the relational expression is less than or equal to the value of the shit expression, in which case, a goto is performed
+                                    emit("goto", "");                                       // Emit Quad to perform a goto if the condition is false
                                 }
                                 else {
-                                    yyerror("Incompatible types");
+                                    yyerror("Incompatible types");                          // Throw an error if the types are incompatible
                                 }
                             }
                         | relational_expression GREATER_EQUAL_THAN shift_expression
                             { 
                                 // printf("\nLine %d : EXPRESSION Rule : relational_expression -> relational_expression >= shift_expression\n", yylineno);
-                                if(typecheck($1->loc, $3->loc)) {                 
-                                    $$ = new Expression();                       
-                                    $$->type = "bool";
-                                    $$->trueList = makeList(nextInstruction());           
-                                    $$->falseList = makeList(nextInstruction() + 1);      
-                                    emit(">=", "", $1->loc->name, $3->loc->name);    
-                                    emit("goto", "");                               
+                                if(typecheck($1->loc, $3->loc)) {                           // Check if the types are compatible
+                                    $$ = new Expression();                                  // Create a new Expression
+                                    $$->type = "bool";                                      // Set the type of the Expression to bool
+                                    $$->trueList = makeList(nextInstruction());             // Set the trueList of the Expression
+                                    $$->falseList = makeList(nextInstruction() + 1);        // Set the falseList of the Expression
+                                    emit(">=", "", $1->loc->name, $3->loc->name);           // Emit Quad to check if the value of the relational expression is greater than or equal to the value of the shit expression, in which case, a goto is performed
+                                    emit("goto", "");                                       // Emit Quad to perform a goto if the condition is false
                                 }
                                 else {
-                                    yyerror("Incompatible types");
+                                    yyerror("Incompatible types");                          // Throw an error if the types are incompatible
                                 }
                             }
                         ;
@@ -634,15 +634,15 @@ equality_expression:
                     | equality_expression EQUALS relational_expression
                         { 
                             // printf("\nLine %d : EXPRESSION Rule : equality_expression -> equality_expression == relational_expression\n", yylineno);
-                            if(typecheck($1->loc, $3->loc)) {                   
-                                bool2int($1);                           
-                                bool2int($3);
-                                $$ = new Expression();
-                                $$->type = "bool";
-                                $$->trueList = makeList(nextInstruction());          
-                                $$->falseList = makeList(nextInstruction() + 1);     
-                                emit("==", "", $1->loc->name, $3->loc->name);  
-                                emit("goto", "");                               
+                            if(typecheck($1->loc, $3->loc)) {                               // Check if the types are compatible
+                                bool2int($1);                                               // Convert the type of the Expression to int
+                                bool2int($3);                                               // Convert the type of the Expression to int
+                                $$ = new Expression();                                      // Create a new Expression
+                                $$->type = "bool";                                          // Set the type of the Expression to bool
+                                $$->trueList = makeList(nextInstruction());                 // Set the trueList of the Expression
+                                $$->falseList = makeList(nextInstruction() + 1);            // Set the falseList of the Expression
+                                emit("==", "", $1->loc->name, $3->loc->name);               // Emit Quad to check if the value of the equality expression is equal to the value of the relational expression, in which case, a goto is performed
+                                emit("goto", "");                                           // Emit Quad to perform a goto if the condition is false
                             }
                             else {
                                 yyerror("Incompatible types");
@@ -652,14 +652,14 @@ equality_expression:
                         { 
                             // printf("\nLine %d : EXPRESSION Rule : equality_expression -> equality_expression != relational_expression\n", yylineno);
                             if(typecheck($1->loc, $3->loc)) {                   
-                                bool2int($1);                           
-                                bool2int($3);
-                                $$ = new Expression();
-                                $$->type = "bool";
-                                $$->trueList = makeList(nextInstruction());          
-                                $$->falseList = makeList(nextInstruction() + 1);     
-                                emit("!=", "", $1->loc->name, $3->loc->name);  
-                                emit("goto", "");                               
+                                bool2int($1);                                               // Convert the type of the Expression to int
+                                bool2int($3);                                               // Convert the type of the Expression to int
+                                $$ = new Expression();                                      // Create a new Expression
+                                $$->type = "bool";                                          // Set the type of the Expression to bool
+                                $$->trueList = makeList(nextInstruction());                 // Set the trueList of the Expression
+                                $$->falseList = makeList(nextInstruction() + 1);            // Set the falseList of the Expression
+                                emit("!=", "", $1->loc->name, $3->loc->name);               // Emit Quad to check if the value of the equality expression is not equal to the value of the relational expression, in which case, a goto is performed
+                                emit("goto", "");                                           // Emit Quad to perform a goto if the condition is false
                             }
                             else {
                                 yyerror("Incompatible types");
@@ -676,13 +676,13 @@ AND_expression:
                 | AND_expression BITWISE_AND equality_expression
                     { 
                         // printf("\nLine %d : EXPRESSION Rule : AND_expression -> AND_expression & equality_expression\n", yylineno);
-                        if(typecheck($1->loc, $3->loc)) {                               
-                            bool2int($1);                                      
-                            bool2int($3);
-                            $$ = new Expression();
-                            $$->type = "not_bool";                                     
-                            $$->loc = SymbolTable::genTemp(new SymbolType("int"));     
-                            emit("&", $$->loc->name, $1->loc->name, $3->loc->name);    
+                        if(typecheck($1->loc, $3->loc)) {                               // Check if the types are compatible
+                            bool2int($1);                                               // Convert the type of the Expression to int
+                            bool2int($3);                                               // Convert the type of the Expression to int
+                            $$ = new Expression();                                      // Create a new Expression
+                            $$->type = "not_bool";                                          // Set the type of the Expression to not_bool
+                            $$->loc = SymbolTable::genTemp(new SymbolType("int"));          // Generate a temporary symbol
+                            emit("&", $$->loc->name, $1->loc->name, $3->loc->name);         // Emit Quad to perform a bitwise AND operation on the two values
                         }
                         else {
                             yyerror("Incompatible types");
@@ -699,13 +699,13 @@ exclusive_OR_expression:
                         | exclusive_OR_expression BITWISE_XOR AND_expression
                             { 
                                 // printf("\nLine %d : EXPRESSION Rule : exclusive_OR_expression -> exclusive_OR_expression ^ AND_expression\n", yylineno);
-                                if(typecheck($1->loc, $3->loc)) {                               
-                                    bool2int($1);                                      
-                                    bool2int($3);
-                                    $$ = new Expression();
-                                    $$->type = "not_bool";                                     
-                                    $$->loc = SymbolTable::genTemp(new SymbolType("int"));     
-                                    emit("^", $$->loc->name, $1->loc->name, $3->loc->name);    
+                                if(typecheck($1->loc, $3->loc)) {                                           // Check if the types are compatible          
+                                    bool2int($1);                                                       // Convert the type of the Expression to int
+                                    bool2int($3);                                                       // Convert the type of the Expression to int
+                                    $$ = new Expression();                                                          // Create a new Expression                  
+                                    $$->type = "not_bool";                                              // Set the type of the Expression to not_bool
+                                    $$->loc = SymbolTable::genTemp(new SymbolType("int"));                  // Generate a temporary symbol
+                                    emit("^", $$->loc->name, $1->loc->name, $3->loc->name);                 // Emit Quad to perform a bitwise XOR operation on the two values
                                 }
                                 else {
                                     yyerror("Incompatible types");
@@ -726,9 +726,9 @@ inclusive_OR_expression:
                                     bool2int($1);                                      
                                     bool2int($3);
                                     $$ = new Expression();
-                                    $$->type = "not_bool";                                     
-                                    $$->loc = SymbolTable::genTemp(new SymbolType("int"));     
-                                    emit("|", $$->loc->name, $1->loc->name, $3->loc->name);    
+                                    $$->type = "not_bool";                                          // Set the type of the Expression to not_bool
+                                    $$->loc = SymbolTable::genTemp(new SymbolType("int"));          // Generate a temporary symbol
+                                    emit("|", $$->loc->name, $1->loc->name, $3->loc->name);         // Emit Quad to perform a bitwise OR operation on the two values
                                 }
                                 else {
                                     yyerror("Incompatible types");
@@ -737,23 +737,23 @@ inclusive_OR_expression:
                         ;
 
 
-M:  
+M:              // This is used to handle backpatching
         {
             // printf("\nLine %d : EXPRESSION Rule : M -> epsilon\n", yylineno);
-            $$ = nextInstruction();
+            $$ = nextInstruction();                 // Get the next instruction
         }   
     ;
 
-N: 
+N:      // Helps in Control Flow
         {
             // printf("\nLine %d : EXPRESSION Rule : N -> epsilon\n", yylineno);
-            $$ = new Statement();
-            $$->nextList = makeList(nextInstruction());
-            emit("goto", "");
+            $$ = new Statement();                               // Create a new Statement
+            $$->nextList = makeList(nextInstruction());         // Set the nextList of the Statement
+            emit("goto", "");                                   // Emit Quad to perform a goto
         }
 	;
 
-logical_AND_expression:
+logical_AND_expression:             
                         inclusive_OR_expression
                             { 
                                 // printf("\nLine %d : EXPRESSION Rule : logical_AND_expression -> inclusive_OR_expression\n", yylineno);
@@ -762,14 +762,14 @@ logical_AND_expression:
                         | logical_AND_expression LOGICAL_AND M inclusive_OR_expression
                             { 
                                 // printf("\nLine %d : EXPRESSION Rule : logical_AND_expression -> logical_AND_expression && inclusive_OR_expression\n", yylineno);
-                                if(typecheck($1->loc, $4->loc)) {                               
-                                    bool2int($1);                                      
+                                if(typecheck($1->loc, $4->loc)) {                       // Check if the types are compatible                       
+                                    bool2int($1);
                                     bool2int($4);
-                                    $$ = new Expression();
-                                    $$->type = "bool";
-                                    backpatch($1->trueList, $3);
-                                    $$->trueList = $4->trueList;
-                                    $$->falseList = merge($1->falseList, $4->falseList);                    
+                                    $$ = new Expression();                                      // Create a new Expression
+                                    $$->type = "bool";                                          // Set the type of the Expression to bool
+                                    backpatch($1->trueList, $3);                                // Backpatch the trueList of the Expression
+                                    $$->trueList = $4->trueList;                                // Set the trueList of the Expression
+                                    $$->falseList = merge($1->falseList, $4->falseList);        // Set the falseList of the Expression       
                                 }
                                 else {
                                     yyerror("Incompatible types");
@@ -789,14 +789,14 @@ logical_OR_expression:
                                 if(typecheck($1->loc, $4->loc)) {                               
                                     bool2int($1);                                      
                                     bool2int($4);
-                                    $$ = new Expression();
-                                    $$->type = "bool";
-                                    backpatch($1->falseList, $3);
-                                    $$->trueList = merge($1->trueList, $4->trueList);
-                                    $$->falseList = $4->falseList;                    
+                                    $$ = new Expression();                                  // Create a new Expression
+                                    $$->type = "bool";                                      // Set the type of the Expression to bool
+                                    backpatch($1->falseList, $3);                           // Backpatch the falseList of the Expression
+                                    $$->trueList = merge($1->trueList, $4->trueList);       // Set the trueList of the Expression
+                                    $$->falseList = $4->falseList;                          // Set the falseList of the Expression
                                 }
                                 else {
-                                    yyerror("Incompatible types");
+                                    yyerror("Incompatible types");                      
                                 }
                             }
                         ;
@@ -810,21 +810,21 @@ conditional_expression:
                         | logical_OR_expression N QUESTION_MARK M expression N COLON M conditional_expression
                             { 
                                 // printf("\nLine %d : EXPRESSION Rule : conditional_expression -> logical_OR_expression ? expression : conditional_expression\n", yylineno);  
-                                $$->loc = SymbolTable::genTemp($5->loc->type);
-                                $$->loc->update($5->loc->type);
-                                backpatch($1->trueList, $4);                        
-                                backpatch($1->falseList, $8);
-                                emit("=", $$->loc->name, $9->loc->name);
-                                list<int> l1 = makeList(nextInstruction());
-                                emit("goto", "");                                   
-                                backpatch($6->nextList, nextInstruction());               
-                                emit("=", $$->loc->name, $5->loc->name);
-                                list<int> l2 = makeList(nextInstruction());               
-                                l1 = merge(l1, l2);                                 
-                                emit("goto", "");                                   
-                                backpatch($2->nextList, nextInstruction());               
-                                int2bool($1);                                                      
-                                backpatch(l1, nextInstruction());
+                                $$->loc = SymbolTable::genTemp($5->loc->type);          // Generate a temporary symbol
+                                $$->loc->update($5->loc->type);                         // Update the type of the temporary symbol
+                                backpatch($1->trueList, $4);                            // Backpatch the trueList of the Expression
+                                backpatch($1->falseList, $8);                           // Backpatch the falseList of the Expression
+                                emit("=", $$->loc->name, $9->loc->name);                // Assign the value of the conditional expression to the temporary symbol
+                                list<int> l1 = makeList(nextInstruction());             // Create a new list
+                                emit("goto", "");                                       // Emit Quad to perform a goto
+                                backpatch($6->nextList, nextInstruction());             // Backpatch the nextList of the Expression
+                                emit("=", $$->loc->name, $5->loc->name);                // Assign the value of the expression to the temporary symbol
+                                list<int> l2 = makeList(nextInstruction());             // Create a new list
+                                l1 = merge(l1, l2);                                     // Merge the two lists
+                                emit("goto", "");                                       // Emit Quad to perform a goto
+                                backpatch($2->nextList, nextInstruction());             // Backpatch the nextList of N
+                                int2bool($1);                                           // Convert the type of the Expression to bool
+                                backpatch(l1, nextInstruction());                       // Backpatch the list. The list l1 ensures that after either of the assignments, the control flow is transferred to the next instruction
                             }
                         ;
 
@@ -837,16 +837,16 @@ assignment_expression:
                         | unary_expression assignment_operator assignment_expression
                             { 
                                 // printf("\nLine %d : EXPRESSION Rule : assignment_expression -> unary_expression assignment_operator assignment_expression\n", yylineno);
-                                if($1->atype == "arr") {        
-                                    $3->loc = convertType($3->loc, $1->type->type);
-                                    emit("[]=", $1->Array->name, $1->loc->name, $3->loc->name);
+                                if($1->atype == "arr") {                                                // If the Array is of type array
+                                    $3->loc = convertType($3->loc, $1->type->type);                     // Convert the type of the Array
+                                    emit("[]=", $1->Array->name, $1->loc->name, $3->loc->name);         // Emit Quad to copy the value of the Array to the location
+                                }   
+                                else if($1->atype == "ptr") {                               // If the Array is of type pointer
+                                    emit("*=", $1->Array->name, $3->loc->name);             // Emit Quad to copy the value of the Array to the location
                                 }
-                                else if($1->atype == "ptr") {
-                                    emit("*=", $1->Array->name, $3->loc->name);
-                                }
-                                else {
-                                    $3->loc = convertType($3->loc, $1->Array->type->type);
-                                    emit("=", $1->Array->name, $3->loc->name);
+                                else {                                                              // If the Array is of type int
+                                    $3->loc = convertType($3->loc, $1->Array->type->type);          // Convert the type of the Array
+                                    emit("=", $1->Array->name, $3->loc->name);                      // Emit Quad to copy the value of the Array to the location
                                 }
                                 $$ = $3;
                             }
@@ -988,10 +988,10 @@ init_declarator:
                 | declarator ASSIGNMENT initialiser
                     { 
                         // printf("\nLine %d : DECLARATION Rule : init_declarator -> declarator = initialiser\n", yylineno);
-                        if($3->value != "") {
-                            $1->value = $3->value;
+                        if($3->value != "") {                           // If the value of the initialiser is not empty
+                            $1->value = $3->value;                      // Set the value of the declarator to the value of the initialiser
                         }
-                        emit("=", $1->name, $3->name);
+                        emit("=", $1->name, $3->name);                  // Emit Quad to assign the value of the initialiser to the declarator
                     }
                 ;
 
@@ -1018,12 +1018,12 @@ type_specifier:
                 VOIDTYPE
                     { 
                         // printf("\nLine %d : DECLARATION Rule : type_specifier -> void\n", yylineno);
-                        varType = "void";
+                        varType = "void";                   // Set the type of the variable to void
                     }
                 | CHARTYPE
                     { 
                         // printf("\nLine %d : DECLARATION Rule : type_specifier -> char\n", yylineno);
-                        varType = "char";
+                        varType = "char";                   // Set the type of the variable to char
                     }
                 | SHORT
                     {
@@ -1032,7 +1032,7 @@ type_specifier:
                 | INTTYPE
                     { 
                         // printf("\nLine %d : DECLARATION Rule : type_specifier -> int\n", yylineno); 
-                        varType = "int";
+                        varType = "int";                    // Set the type of the variable to int
                     }
                 | LONG
                     {
@@ -1041,7 +1041,7 @@ type_specifier:
                 | FLOATTYPE
                     { 
                         // printf("\nLine %d : DECLARATION Rule : type_specifier -> float\n", yylineno);
-                        varType = "float";
+                        varType = "float";                  // Set the type of the variable to float
                     }
                 | DOUBLE
                     {
@@ -1174,12 +1174,12 @@ declarator:
             pointer direct_declarator
                 { 
                     // printf("\nLine %d : DECLARATION Rule : declarator -> pointer direct_declarator\n", yylineno);
-                    SymbolType* temp = $1;
-                    while(temp->arrType != NULL) {
-                        temp = temp->arrType;
+                    SymbolType* temp = $1;                          // Create a temporary SymbolType
+                    while(temp->arrType != NULL) {                  // For multi-dimensional arrays, traverse down the array till reching the base type
+                        temp = temp->arrType;                       
                     }
-                    temp->arrType = $2->type;  
-                    $$ = $2->update($1);
+                    temp->arrType = $2->type;                   // Set the type of the array to the type of the direct_declarator
+                    $$ = $2->update($1);                        // Update the direct_declarator
                 }
             | direct_declarator
                 { 
@@ -1191,8 +1191,8 @@ direct_declarator:
                     IDENTIFIER 
                         { 
                             // printf("\nLine %d : DECLARATION Rule : direct_declarator -> IDENTIFIER\n", yylineno);
-                            $$ = $1->update(new SymbolType(varType));   
-                            currentSymbol = $$;   
+                            $$ = $1->update(new SymbolType(varType));               // Update the SymbolTable entry of the IDENTIFIER
+                            currentSymbol = $$;                                     // Set the currentSymbol to the IDENTIFIER
                         }
                     | LEFT_PARENTHESES declarator RIGHT_PARENTHESES
                         { 
@@ -1210,28 +1210,28 @@ direct_declarator:
                     | direct_declarator LEFT_SQUARE_BRACKET assignment_expression RIGHT_SQUARE_BRACKET
                         { 
                             // printf("\nLine %d : DECLARATION Rule : direct_declarator -> direct_declarator [ assignment_expression ]\n", yylineno);
-                            SymbolType* cur_type = $1->type;
-                            SymbolType* prev = NULL;
-                            while(cur_type->type == "arr") {
+                            SymbolType* cur_type = $1->type;                                        // Get the type of the direct_declarator
+                            SymbolType* prev = NULL;                                                // Create a temporary SymbolType prev
+                            while (cur_type->type == "arr") {                                       //Get Base Type
                                 prev = cur_type;
                                 cur_type = cur_type->arrType;
                             }
-                            if(prev == NULL) {
-                                int temp = atoi($3->loc->value.c_str());                
-                                SymbolType* tp = new SymbolType("arr", $1->type, temp); 
-                                $$ = $1->update(tp);                                    
+                            if (prev == NULL) {                                                 // If the direct_declarator is not an array
+                                int temp = atoi($3->loc->value.c_str());                        // Convert the value of the assignment_expression to an integer
+                                SymbolType* tp = new SymbolType("arr", $1->type, temp);         // Create a new SymbolType
+                                $$ = $1->update(tp);                                            // Update the direct_declarator
                             }
-                            else {
-                                int temp = atoi($3->loc->value.c_str());                
-                                prev->arrType = new SymbolType("arr", cur_type, temp);         
-                                $$ = $1->update($1->type);                             
+                            else {                                                              // If the direct_declarator is an array
+                                int temp = atoi($3->loc->value.c_str());                        // Convert the value of the assignment_expression to an integer
+                                prev->arrType = new SymbolType("arr", cur_type, temp);          // Create a new SymbolType
+                                $$ = $1->update($1->type);                                      // Update the direct_declarator
                             }
                         }
                     | direct_declarator LEFT_SQUARE_BRACKET RIGHT_SQUARE_BRACKET
                         { 
                             // printf("\nLine %d : DECLARATION Rule : direct_declarator -> direct_declarator [ ]\n", yylineno);
-                            SymbolType* cur_type = $1->type;
-                            SymbolType* prev = NULL;
+                            SymbolType* cur_type = $1->type;                                    // Same as above, but for no given size
+                            SymbolType* prev = NULL;                                                    
                             while(cur_type->type == "arr") {
                                 prev = cur_type;
                                 cur_type = cur_type->arrType;
@@ -1268,15 +1268,15 @@ direct_declarator:
                     | direct_declarator LEFT_PARENTHESES change_table parameter_type_list RIGHT_PARENTHESES
                         { 
                             // printf("\nLine %d : DECLARATION Rule : direct_declarator -> direct_declarator ( parameter_type_list )\n", yylineno);
-                            currentST->name = $1->name;
-                            if($1->type->type != "void") {
-                                Symbol* s = currentST->lookup("return");   
-                                s->update($1->type);
+                            currentST->name = $1->name;                             // Set the name of the SymbolTable to the name of the direct_declarator
+                            if($1->type->type != "void") {                          // If the type of the direct_declarator is not void
+                                Symbol* s = currentST->lookup("return");            // Lookup the SymbolTable for the return type
+                                s->update($1->type);                                // Update the return type
                             }
-                            $1->nestedTable = currentST;
-                            currentST->parent = globalST;  
-                            changeTable(globalST);        
-                            currentSymbol = $$; 
+                            $1->nestedTable = currentST;                            // Set the nestedTable of the direct_declarator to the current SymbolTable
+                            currentST->parent = globalST;                           // Set the parent of the current SymbolTable to the global SymbolTable
+                            changeTable(globalST);                                  // Change the current SymbolTable to the global SymbolTable
+                            currentSymbol = $$;                                     // Set the currentSymbol to the direct_declarator
                         }
                     | direct_declarator LEFT_PARENTHESES identifier_list RIGHT_PARENTHESES
                         { 
@@ -1285,7 +1285,7 @@ direct_declarator:
                     | direct_declarator LEFT_PARENTHESES change_table RIGHT_PARENTHESES
                         { 
                             // printf("\nLine %d : DECLARATION Rule : direct_declarator -> direct_declarator ( )\n", yylineno);
-                            currentST->name = $1->name;
+                            currentST->name = $1->name;                         //Same as above, but for no parameters
                             if($1->type->type != "void") {
                                 Symbol* s = currentST->lookup("return");   
                                 s->update($1->type);
@@ -1312,7 +1312,7 @@ pointer:
         ASTERISK type_qualifier_list_opt
             { 
                 // printf("\nLine %d : DECLARATION Rule : pointer -> * type_qualifier_list_opt\n", yylineno);
-                $$ = new SymbolType("ptr");
+                $$ = new SymbolType("ptr");                                 
             }
         | ASTERISK type_qualifier_list_opt pointer
             { 
@@ -1500,7 +1500,7 @@ labeled_statement:
                         }
                     ;
 
-loop_statement:
+loop_statement:         //Identical to statement, but for loops, is useful to prevent Shift Reduce Conflicts
                 labeled_statement
                 { 
                     // printf("\nLine %d : STATEMENT Rule : loop_statement -> labeled_statement\n", yylineno);
@@ -1508,7 +1508,7 @@ loop_statement:
                 | expression_statement
                 {
                     // printf("\nLine %d : STATEMENT Rule : loop_statement -> expression_statement\n", yylineno);
-                    $$ = new Statement();          
+                    $$ = new Statement();           
                     $$->nextList = $1->nextList;    
                 }
                 | selection_statement
@@ -1530,12 +1530,12 @@ loop_statement:
 
 change_table:
                 {   
-                    if(currentSymbol->nestedTable != NULL) {
-                        changeTable(currentSymbol->nestedTable);
-                        emit("label", currentST->name);
+                    if(currentSymbol->nestedTable != NULL) {                // If the currentSymbol has a nested SymbolTable
+                        changeTable(currentSymbol->nestedTable);            // Change the current SymbolTable to the nested SymbolTable
+                        emit("label", currentST->name);                     // Emit Quad to create a label for the nested SymbolTable
                     }
                     else {
-                        changeTable(new SymbolTable(""));
+                        changeTable(new SymbolTable(""));                   // Else, create a new SymbolTable
                     }
                 }
                 ;
@@ -1545,7 +1545,7 @@ compound_statement:
                         { 
                             // printf("\nLine %d : STATEMENT Rule : compound_statement -> { block_item_list_opt }\n", yylineno);
                             $$ = $4;
-                            changeTable(currentST->parent);  
+                            changeTable(currentST->parent);         // Change the current SymbolTable to the parent SymbolTable
                         }
                     ;
 
@@ -1572,7 +1572,7 @@ block_item_list:
                     { 
                         // printf("\nLine %d : STATEMENT Rule : block_item_list -> block_item_list M block_item\n", yylineno);
                         $$ = $3;
-                        backpatch($1->nextList, $2);
+                        backpatch($1->nextList, $2);        // Backpatch the nextList of the block_item_list to the M
                     }
                 ;
 
@@ -1614,24 +1614,24 @@ selection_statement:
                     IF LEFT_PARENTHESES expression N RIGHT_PARENTHESES M statement N %prec THEN
                         { 
                             // printf("\nLine %d : STATEMENT Rule : selection_statement -> if ( expression ) statement\n", yylineno);
-                            backpatch($4->nextList, nextInstruction());                  
-                            int2bool($3);                                  
-                            $$ = new Statement();                                   
-                            backpatch($3->trueList, $6);                           
+                            backpatch($4->nextList, nextInstruction());                  // Backpatch the nextList of N with the next instruction
+                            int2bool($3);                                               // Convert the expression to a boolean expression
+                            $$ = new Statement();                                       // Create a new Statement
+                            backpatch($3->trueList, $6);                                // Backpatch the trueList of the expression with the M
                         
-                            list<int> temp = merge($3->falseList, $7->nextList);
-                            $$->nextList = merge($8->nextList, temp);
+                            list<int> temp = merge($3->falseList, $7->nextList);        // Merge the falseList of the expression with the nextList of the statement
+                            $$->nextList = merge($8->nextList, temp);                   // Merge the nextList of the N with the nextList of the statement and make it the nextList of the selection_statement
                         }
                     | IF LEFT_PARENTHESES expression N RIGHT_PARENTHESES M statement N ELSE M statement
                         { 
                             // printf("\nLine %d : STATEMENT Rule : selection_statement -> if ( expression ) statement else statement\n", yylineno);
-                            backpatch($4->nextList, nextInstruction());                  
-                            int2bool($3);                                  
-                            $$ = new Statement();                                  
-                            backpatch($3->trueList, $6);                        
-                            backpatch($3->falseList, $10);
-                            list<int> temp = merge($7->nextList, $8->nextList);
-                            $$->nextList = merge($11->nextList, temp);
+                            backpatch($4->nextList, nextInstruction());                     // Backpatch the nextList of N with the next instruction
+                            int2bool($3);                                                   // Convert the expression to a boolean expression
+                            $$ = new Statement();                                               // Create a new Statement
+                            backpatch($3->trueList, $6);                                    // Backpatch the trueList of the expression with the M
+                            backpatch($3->falseList, $10);                                  // Backpatch the falseList of the expression with the M
+                            list<int> temp = merge($7->nextList, $8->nextList);             // Merge the nextList of the statement with the nextList of the statement
+                            $$->nextList = merge($11->nextList, temp);                      // Merge the nextList of the N with the nextList of the statement and make it the nextList of the selection_statement
                         }
                     | SWITCH LEFT_PARENTHESES expression RIGHT_PARENTHESES statement
                         { 
@@ -1642,14 +1642,14 @@ selection_statement:
 iteration_statement:
                     WHILE W LEFT_PARENTHESES X change_table M expression RIGHT_PARENTHESES M loop_statement
                     {   
-                        $$ = new Statement();                 
-                        int2bool($7);                 
-                        backpatch($10->nextList, $6);           
-                        backpatch($7->trueList, $9);         
-                        $$->nextList = $7->falseList;         
-                        emit("goto", int2string($6));  
-                        blockName = "";
-                        changeTable(currentST->parent);
+                        $$ = new Statement();                       // Create a new Statement
+                        int2bool($7);                               // Convert the expression to a boolean expression
+                        backpatch($10->nextList, $6);               // Backpatch the nextList of the loop_statement with the M
+                        backpatch($7->trueList, $9);                // Backpatch the trueList of the expression with the M
+                        $$->nextList = $7->falseList;               // Make the falseList of the expression the nextList of the iteration_statement
+                        emit("goto", int2string($6));               // Emit Quad to goto the M
+                        blockName = "";                             // Reset the blockName
+                        changeTable(currentST->parent);             // Change the current SymbolTable to the parent SymbolTable
                     }
                     | WHILE W LEFT_PARENTHESES X change_table M expression RIGHT_PARENTHESES LEFT_CURLY_BRACKET M block_item_list_opt RIGHT_CURLY_BRACKET
                     {
@@ -1665,12 +1665,12 @@ iteration_statement:
                     | DO D M loop_statement M WHILE LEFT_PARENTHESES expression RIGHT_PARENTHESES SEMI_COLON
                     {
                         
-                        $$ = new Statement();                     
-                        int2bool($8);                  
-                        backpatch($8->trueList, $3);           
-                        backpatch($4->nextList, $5);           
-                        $$->nextList = $8->falseList;          
-                        blockName = "";
+                        $$ = new Statement();                       // Create a new Statement
+                        int2bool($8);                               // Convert the expression to a boolean expression
+                        backpatch($8->trueList, $3);                // Backpatch the trueList of the expression with the M
+                        backpatch($4->nextList, $5);                // Backpatch the nextList of the loop_statement with the M
+                        $$->nextList = $8->falseList;               // Make the falseList of the expression the nextList of the iteration_statement
+                        blockName = "";                             // Reset the blockName
                     }
                     | DO D LEFT_CURLY_BRACKET M block_item_list_opt RIGHT_CURLY_BRACKET M WHILE LEFT_PARENTHESES expression RIGHT_PARENTHESES SEMI_COLON
                     {
@@ -1683,15 +1683,15 @@ iteration_statement:
                     }
                     | FOR F LEFT_PARENTHESES X change_table declaration M expression_statement M expression N RIGHT_PARENTHESES M loop_statement
                     {
-                        $$ = new Statement();                  
-                        int2bool($8);                  
-                        backpatch($8->trueList, $13);          
-                        backpatch($11->nextList, $7);        
-                        backpatch($14->nextList, $9);          
-                        emit("goto", int2string($9));   
-                        $$->nextList = $8->falseList;          
-                        blockName = "";
-                        changeTable(currentST->parent);
+                        $$ = new Statement();                       // Create a new Statement
+                        int2bool($8);                               // Convert the expression to a boolean expression
+                        backpatch($8->trueList, $13);               // Backpatch the trueList of the expression with the M3
+                        backpatch($11->nextList, $7);               // Backpatch the nextList of the N with the M1
+                        backpatch($14->nextList, $9);               // Backpatch the nextList of the loop_statement with the M2
+                        emit("goto", int2string($9));               // Emit Quad to goto the M2
+                        $$->nextList = $8->falseList;               // Make the falseList of the expression the nextList of the iteration_statement
+                        blockName = "";                             // Reset the blockName
+                        changeTable(currentST->parent);             // Change the current SymbolTable to the parent SymbolTable
                     }
                     | FOR F LEFT_PARENTHESES X change_table expression_statement M expression_statement M expression N RIGHT_PARENTHESES M loop_statement
                     {
@@ -1749,8 +1749,8 @@ jump_statement:
                 | RETURN expression SEMI_COLON
                     { 
                         // printf("\nLine %d : STATEMENT Rule : jump_statement -> return expression_opt ;\n", yylineno);
-                        $$ = new Statement();
-                        emit("return", $2->loc->name); 
+                        $$ = new Statement();               // Create a new Statement
+                        emit("return", $2->loc->name);      // Emit Quad to return the expression
                     }
                 | RETURN SEMI_COLON
                     { 
@@ -1760,27 +1760,27 @@ jump_statement:
                     }
                 ;
 
-F:
+F:                  //Useful for Block names
         {
             blockName = "FOR";
         }
         ;
 
-W:
+W:              //Useful for Block names
         {
             blockName = "WHILE";
         }
         ;
 
-D:
+D:              //Useful for Block names
         {
             blockName = "DO_WHILE";
         }
         ;
 
-X:
+X:              //Needed to create new symbol tables after curly brackets
         {   
-            string newST = currentST->name + "." + blockName + "$" + to_string(STCount++);  
+            string newST = currentST->name + "#" + blockName + "#" + to_string(STCount++);  
             Symbol* temp_symbol = currentST->lookup(newST);
             temp_symbol->nestedTable = new SymbolTable(newST); 
             temp_symbol->name = newST;
