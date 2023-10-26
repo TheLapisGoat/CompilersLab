@@ -56,9 +56,9 @@
 %token VOID
 %token VOLATILE
 %token WHILE
-%token BOOL
-%token COMPLEX
-%token IMAGINARY
+%token _BOOL
+%token _COMPLEX
+%token _IMAGINARY
 
 %token LEFT_SQUARE_BRACKET
 %token INCREMENT
@@ -419,11 +419,11 @@ type_specifier
                 { printf("\nLine %d : DECLARATION Rule : type_specifier -> signed\n", yylineno); }
                 | UNSIGNED
                 { printf("\nLine %d : DECLARATION Rule : type_specifier -> unsigned\n", yylineno); }
-                | BOOL
+                | _BOOL
                 { printf("\nLine %d : DECLARATION Rule : type_specifier -> _Bool\n", yylineno); }
-                | COMPLEX
+                | _COMPLEX
                 { printf("\nLine %d : DECLARATION Rule : type_specifier -> _Complex\n", yylineno); }
-                | IMAGINARY
+                | _IMAGINARY
                 { printf("\nLine %d : DECLARATION Rule : type_specifier -> _Imaginary\n", yylineno); }
                 | enum_specifier
                 { printf("\nLine %d : DECLARATION Rule : type_specifier -> enum_specifier\n", yylineno); }

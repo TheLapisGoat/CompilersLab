@@ -80,7 +80,6 @@ int main()
     // Calculate the sum of array elements
     for (int i = 0; i < 5; i++)
     {
-        double _Complex n6;
         sum += array[i];
     }
 

@@ -127,9 +127,9 @@ NEWLINE                 \n
 {VOID}                  {return VOID;}
 {VOLATILE}              {return VOLATILE;}
 {WHILE}                 {return WHILE;}
-{BOOL}                  {return BOOL;}
-{COMPLEX}               {return COMPLEX;}
-{IMAGINARY}             {return IMAGINARY;}
+{BOOL}                  {return _BOOL;}
+{COMPLEX}               {return _COMPLEX;}
+{IMAGINARY}             {return _IMAGINARY;}
 
 {IDENTIFIER}            {yylval.idValue = strdup(yytext); return IDENTIFIER;}
 
